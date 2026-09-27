@@ -12,17 +12,31 @@
     <header class="hero">
       <p class="eyebrow">DES MOINES AREA</p>
       <h1>Find your next tee time.</h1>
-      <p class="intro">Search seven local courses at once, narrow the list, then jump directly to the course to book.</p>
+      <p class="intro">Search live tee times at 13 local courses, and explore more public courses nearby.</p>
     </header>
 
     <section class="search-panel" aria-labelledby="search-title">
       <h2 id="search-title" class="sr-only">Search tee times</h2>
       <form id="search-form">
-        <label><span>Date</span><input id="date" name="date" type="date" required></label>
-        <button class="primary-button" type="submit"><span>Search tee times</span><span aria-hidden="true">→</span></button>
+        <fieldset class="course-picker">
+          <legend>Courses to search</legend>
+          <div class="course-picker-heading">
+            <p>Choose the courses you want to check.</p>
+            <div class="course-picker-actions">
+              <button id="select-all-courses" class="text-button" type="button">Select all</button>
+              <button id="clear-course-selection" class="text-button" type="button">Clear</button>
+            </div>
+          </div>
+          <div id="course-choices" class="course-choices" aria-label="Courses to search"></div>
+          <p id="course-selection-error" class="selection-error" role="alert" hidden>Select at least one course.</p>
+        </fieldset>
+        <div class="search-actions">
+          <label><span>Date</span><input id="date" name="date" type="date" required></label>
+          <button class="primary-button" type="submit"><span>Search tee times</span><span aria-hidden="true">→</span></button>
+        </div>
       </form>
       <div class="filters" aria-label="Filter tee times">
-        <label><span>Course</span><select id="course-filter"><option value="">All courses</option></select></label>
+        <label><span>Filter results by course</span><select id="course-filter"><option value="">All searched courses</option></select></label>
         <label>
           <span>Golfers</span>
           <select id="players-filter">
@@ -46,9 +60,20 @@
         </div>
         <button id="clear-filters" class="text-button" type="button">Reset filters</button>
       </div>
-      <div id="status" class="status">Tee times are checked live, so a full search may take about a minute.</div>
+      <div id="status" class="status">Select the courses you want to search, then choose a date.</div>
       <div id="course-errors" class="course-errors" hidden></div>
       <div id="results" class="results-grid"></div>
+    </section>
+
+    <section class="course-directory" aria-labelledby="directory-title">
+      <div class="results-heading">
+        <div>
+          <p class="eyebrow">MORE COURSES</p>
+          <h2 id="directory-title">Explore nearby golf.</h2>
+        </div>
+      </div>
+      <p class="directory-intro">Six of these courses are included in the live search. For the others, open the booking link to check availability directly. Drive time depends on your starting point; courses marked “Edge of area” may be more than 30 minutes from downtown Des Moines.</p>
+      <div id="additional-courses" class="directory-grid"></div>
     </section>
   </main>
 

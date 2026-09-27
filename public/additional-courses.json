@@ -1,0 +1,12 @@
+[
+  { "name": "Copper Creek", "location": "Pleasant Hill", "url": "https://golfcoppercreek.com/", "booking": "Online tee times", "live": true, "edge": false },
+  { "name": "Toad Valley", "location": "Pleasant Hill", "url": "https://toadvalleygolfcourse.com/tee-times/", "booking": "Online tee times", "live": true, "edge": false },
+  { "name": "Woodland Hills", "location": "Des Moines", "url": "https://www.golfwoodlandhills.com/book-a-tee-time/", "booking": "18-hole and executive 9 tee times", "live": true, "edge": false },
+  { "name": "Beaver Creek", "location": "Grimes", "url": "https://www.beavercreek-golf.com/", "booking": "Online tee times", "live": true, "edge": false },
+  { "name": "Sugar Creek Municipal", "location": "Waukee", "url": "https://www.waukee.org/199/Sugar-Creek-Municipal-Golf-Course", "booking": "Booking site returned access denied · 9 holes", "live": false, "edge": false },
+  { "name": "Willow Creek", "location": "West Des Moines", "url": "https://book.cgsteetimes.com/asp/default.asp?wcg", "booking": "Booking account required", "live": false, "edge": false },
+  { "name": "Tournament Club of Iowa", "location": "Polk City", "url": "https://tcofiowa.com/", "booking": "Booking site returned access denied", "live": false, "edge": true },
+  { "name": "River Valley", "location": "Adel", "url": "https://rivervalleygolf.com/", "booking": "Booking site returned access denied", "live": false, "edge": true },
+  { "name": "Deer Run", "location": "Indianola", "url": "https://deerrungolfclub.com/tee-times/", "booking": "Online tee times", "live": true, "edge": true },
+  { "name": "Colfax Country Club", "location": "Colfax", "url": "https://colfaxcountryclub.com/tee-times/", "booking": "Online tee times", "live": true, "edge": true }
+]

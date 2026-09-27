@@ -1,10 +1,9 @@
-const courseNames = [
-  'Jester Park', 'Waveland', 'Bright Grandview', 'Blank',
-  'Otter Creek', 'The Legacy', 'Terrace Hills'
-];
-
 const form = document.querySelector('#search-form');
 const dateInput = document.querySelector('#date');
+const courseChoices = document.querySelector('#course-choices');
+const courseSelectionError = document.querySelector('#course-selection-error');
+const selectAllCourses = document.querySelector('#select-all-courses');
+const clearCourseSelection = document.querySelector('#clear-course-selection');
 const courseFilter = document.querySelector('#course-filter');
 const playersFilter = document.querySelector('#players-filter');
 const startFilter = document.querySelector('#start-filter');
@@ -18,8 +17,39 @@ const resultTitle = document.querySelector('#result-title');
 const resultsSection = document.querySelector('.results-section');
 const submitButton = form.querySelector('button[type="submit"]');
 const cardTemplate = document.querySelector('#tee-time-template');
+const additionalCoursesElement = document.querySelector('#additional-courses');
 let teeTimes = [];
 let searchDurationMs = null;
+
+function selectedCourses() {
+  return [...courseChoices.querySelectorAll('input:checked')].map(input => input.value);
+}
+
+async function loadSearchCourses() {
+  try {
+    const response = await fetch('/api/courses');
+    if (!response.ok) throw new Error('Could not load courses to search.');
+    const courseNames = await response.json();
+    const fragment = document.createDocumentFragment();
+    for (const name of courseNames) {
+      const label = document.createElement('label');
+      label.className = 'course-choice';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.name = 'course';
+      input.value = name;
+      const text = document.createElement('span');
+      text.textContent = name;
+      label.append(input, text);
+      fragment.append(label);
+    }
+    courseChoices.replaceChildren(fragment);
+    submitButton.disabled = false;
+  } catch (error) {
+    courseChoices.textContent = error.message;
+    statusElement.textContent = error.message;
+  }
+}
 
 function localIsoDate(date) {
   const year = date.getFullYear();
@@ -76,7 +106,7 @@ function renderResults() {
     ? resultState
     : resultState + ' - ' + formatDuration(searchDurationMs);
   resultTitle.textContent = filtered.length + ' tee time' + (filtered.length === 1 ? '' : 's') + ' found';
-  statusElement.hidden = teeTimes.length > 0;
+  statusElement.hidden = searchDurationMs !== null;
 
   if (!filtered.length) {
     const empty = document.createElement('div');
@@ -113,25 +143,30 @@ function renderResults() {
   resultsElement.append(fragment);
 }
 
-async function search(date) {
+async function search(date, courses) {
   teeTimes = [];
   searchDurationMs = null;
   resultsElement.replaceChildren();
   errorsElement.hidden = true;
   statusElement.hidden = false;
   statusElement.classList.add('loading');
-  statusElement.textContent = 'Checking all seven courses. ForeUp courses may briefly open browser windows…';
+  statusElement.textContent = 'Checking ' + courses.length + ' selected course' +
+    (courses.length === 1 ? '' : 's') + '. Some booking pages may briefly open browser windows…';
   resultKicker.textContent = 'SEARCHING';
   resultTitle.textContent = readableDate(date);
   resultsSection.setAttribute('aria-busy', 'true');
   submitButton.disabled = true;
 
   try {
-    const response = await fetch('/api/teetimes?date=' + encodeURIComponent(date));
+    const params = new URLSearchParams({ date });
+    for (const course of courses) params.append('course', course);
+    const response = await fetch('/api/teetimes?' + params.toString());
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error || 'Search failed.');
     teeTimes = payload.results || [];
     searchDurationMs = payload.timings?.totalMs ?? null;
+    courseFilter.replaceChildren(new Option('All searched courses', ''));
+    for (const course of courses) courseFilter.append(new Option(course, course));
     if (payload.errors && payload.errors.length) {
       errorsElement.hidden = false;
       errorsElement.textContent = 'Some courses could not be checked: ' +
@@ -150,7 +185,8 @@ async function search(date) {
   }
 }
 
-for (const course of courseNames) courseFilter.append(new Option(course, course));
+submitButton.disabled = true;
+loadSearchCourses();
 addTimeOptions(startFilter, 'Any time');
 addTimeOptions(endFilter, 'Any time');
 dateInput.value = localIsoDate(new Date());
@@ -158,7 +194,23 @@ dateInput.min = localIsoDate(new Date());
 
 form.addEventListener('submit', event => {
   event.preventDefault();
-  if (dateInput.value) search(dateInput.value);
+  const courses = selectedCourses();
+  courseSelectionError.hidden = courses.length > 0;
+  if (!courses.length) {
+    courseChoices.querySelector('input')?.focus();
+    return;
+  }
+  if (dateInput.value) search(dateInput.value, courses);
+});
+courseChoices.addEventListener('change', () => {
+  courseSelectionError.hidden = selectedCourses().length > 0;
+});
+selectAllCourses.addEventListener('click', () => {
+  for (const input of courseChoices.querySelectorAll('input')) input.checked = true;
+  courseSelectionError.hidden = true;
+});
+clearCourseSelection.addEventListener('click', () => {
+  for (const input of courseChoices.querySelectorAll('input')) input.checked = false;
 });
 for (const filter of [courseFilter, playersFilter, startFilter, endFilter]) {
   filter.addEventListener('change', renderResults);
@@ -170,3 +222,38 @@ clearFilters.addEventListener('click', () => {
   endFilter.value = '';
   if (teeTimes.length) renderResults();
 });
+
+async function loadAdditionalCourses() {
+  try {
+    const response = await fetch('/additional-courses.json');
+    if (!response.ok) throw new Error('Could not load nearby courses.');
+    const courses = await response.json();
+    const fragment = document.createDocumentFragment();
+
+    for (const course of courses) {
+      const link = document.createElement('a');
+      link.className = 'directory-card';
+      link.href = course.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+
+      const heading = document.createElement('h3');
+      heading.textContent = course.name;
+      const location = document.createElement('p');
+      location.className = 'directory-location';
+      location.textContent = course.location + (course.edge ? ' · Edge of area' : '');
+      const booking = document.createElement('span');
+      booking.className = 'directory-booking';
+      booking.textContent = (course.live ? 'Included in live search · ' : 'Course link · ') + course.booking + ' ↗';
+
+      link.append(heading, location, booking);
+      fragment.append(link);
+    }
+
+    additionalCoursesElement.replaceChildren(fragment);
+  } catch (error) {
+    additionalCoursesElement.textContent = error.message;
+  }
+}
+
+loadAdditionalCourses();

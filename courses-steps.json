@@ -96,6 +96,41 @@
         { "name": "Select Date", "action": "selectDate", "selector": ".datepicker-days td.day:not(.disabled)", "dateFormat": "number", "exact": true },
         { "name": "Read Tee Times", "action": "readTeeTimes", "cardSelector": ".time-summary", "timeSelector": ".times-booking-start-time-label, .booking-start-time-label", "playersSelector": ".js-booking-slot-players span" }
       ]
+    },
+    {
+      "name": "Copper Creek",
+      "url": "https://www.chronogolf.com/club/copper-creek-golf-club",
+      "scraper": "chronoGolf"
+    },
+    {
+      "name": "Beaver Creek",
+      "url": "https://apimanager-cc30.clubcaddie.com/webapi/view/gifdabab",
+      "scraper": "clubCaddie",
+      "clubCaddieDirect": true
+    },
+    {
+      "name": "Toad Valley",
+      "url": "https://toadvalleygolfcourse.com/tee-times/",
+      "scraper": "clubCaddie",
+      "clubCaddieCourse": "toad"
+    },
+    {
+      "name": "Woodland Hills",
+      "url": "https://woodland-hills-gc.book.teeitup.com/",
+      "scraper": "teeItUp",
+      "teeItUpCourse": "5650"
+    },
+    {
+      "name": "Deer Run",
+      "url": "https://deerrungolfclub.com/tee-times/",
+      "scraper": "clubCaddie",
+      "clubCaddieCourse": "deer"
+    },
+    {
+      "name": "Colfax Country Club",
+      "url": "https://colfaxcountryclub.com/tee-times/",
+      "scraper": "clubCaddie",
+      "clubCaddieCourse": "colfax"
     }
   ]
 }

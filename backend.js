@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
 const { chromium } = require('playwright');
+const { scrapeBookingProvider } = require('./booking-providers');
+const configuredCourses = require('./courses-steps.json').courses;
 
 dotenv.config();
 
@@ -113,10 +115,15 @@ async function scrapeCourseInBrowser(browser, course, selectedDate) {
     const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
 
     try {
-        await page.goto(courseUrl, { waitUntil: 'networkidle', timeout: 30000 });
-        const context = await getCourseContext(page, course);
+        if (course.scraper) {
+            const teeTimes = await scrapeBookingProvider(page, course, selectedDate);
+            results.push(...teeTimes);
+            console.log(`[${course.name}] Tee times found: ${teeTimes.length}`);
+        } else {
+            await page.goto(courseUrl, { waitUntil: 'networkidle', timeout: 30000 });
+            const context = await getCourseContext(page, course);
 
-        for (const step of course.steps) {
+            for (const step of course.steps) {
             if (step.action === 'fill') {
                 const value = step.valueFromEnv ? process.env[step.valueFromEnv] : step.value;
                 if (!value) throw new Error(`${course.name} / ${step.name}: missing value`);
@@ -165,6 +172,7 @@ async function scrapeCourseInBrowser(browser, course, selectedDate) {
                     bookingUrl: courseUrl
                 })));
             }
+            }
         }
     } catch (error) {
         console.error(`[${course.name}] ${error.message}`);
@@ -206,10 +214,9 @@ async function scrapeCourseGroup(courses, selectedDate) {
     return { results, errors, timings };
 }
 
-async function scrapeCourse(selectedDate, requestedCourse) {
+async function scrapeCourse(selectedDate, requestedCourses) {
     const startedAt = Date.now();
-    const data = require('./courses-steps.json');
-    const courses = data.courses.filter(course => !requestedCourse || course.name === requestedCourse);
+    const courses = configuredCourses.filter(course => requestedCourses.includes(course.name));
     const cityCourses = courses.filter(course => course.browserGroup === 'city');
     const independentCourses = courses.filter(course => course.browserGroup !== 'city');
 
@@ -314,14 +321,26 @@ const port = Number(process.env.PORT) || 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/api/courses', (req, res) => {
+    res.json(configuredCourses.map(course => course.name));
+});
+
 app.get('/api/teetimes', async (req, res) => {
     const selectedDate = parseDateInput(req.query.date);
     if (!selectedDate) {
         return res.status(400).json({ error: 'Use a valid date in YYYY-MM-DD format.' });
     }
+    const requestedCourses = typeof req.query.course === 'string'
+        ? [req.query.course]
+        : req.query.course;
+    const validNames = new Set(configuredCourses.map(course => course.name));
+    if (!Array.isArray(requestedCourses) || !requestedCourses.length ||
+        requestedCourses.some(name => typeof name !== 'string' || !validNames.has(name))) {
+        return res.status(400).json({ error: 'Select at least one valid course to search.' });
+    }
 
     try {
-        const scrape = await scrapeCourse(selectedDate, req.query.course);
+        const scrape = await scrapeCourse(selectedDate, [...new Set(requestedCourses)]);
         return res.json({
             date: toDateInputValue(selectedDate, 'iso'),
             ...scrape
@@ -332,6 +351,8 @@ app.get('/api/teetimes', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Golf Search is running at http://localhost:${port}`);
 });
+
+module.exports = { app, server };
