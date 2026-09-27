@@ -1,0 +1,101 @@
+{
+  "courses": [
+    {
+      "name": "Jester Park",
+      "browserGroup": "city",
+      "urlFromEnv": "jesterParkUrl",
+      "steps": [
+        { "name": "Email", "action": "fill", "selector": "input[placeholder*='email or phone' i]", "valueFromEnv": "email" },
+        { "name": "Continue", "action": "click", "selector": "button:has-text('Continue')" },
+        { "name": "Password", "action": "fill", "selector": "input[type='password']", "valueFromEnv": "cityPassword" },
+        { "name": "Sign In", "action": "click", "selector": "button:has-text('Sign In')" },
+        { "name": "Book A Tee Time", "action": "click", "selector": "text=/Book A Tee Time/i" },
+        { "name": "Public", "action": "click", "role": "button", "accessibleName": "Public" },
+        { "name": "Select Date", "action": "selectCityDate" },
+        { "name": "Next", "action": "click", "role": "button", "accessibleName": "Next" },
+        { "name": "Find Tee Times", "action": "click", "role": "button", "accessibleName": "Find tee times" },
+        { "name": "Read Tee Times", "action": "readTeeTimes", "cardSelector": "div.relative.border.pb-2", "timeSelector": "div.font-semibold.col-span-8", "playersSelector": "span.mt-1.text-sm", "priceRowSelector": "div.grid.grid-cols-12.px-4.py-1" }
+      ]
+    },
+    {
+      "name": "Waveland",
+      "browserGroup": "city",
+      "urlFromEnv": "wavelandUrl",
+      "steps": [
+        { "name": "Email", "action": "fill", "selector": "input[placeholder*='email or phone' i]", "valueFromEnv": "email" },
+        { "name": "Continue", "action": "click", "selector": "button:has-text('Continue')" },
+        { "name": "Password", "action": "fill", "selector": "input[type='password']", "valueFromEnv": "cityPassword" },
+        { "name": "Sign In", "action": "click", "selector": "button:has-text('Sign In')" },
+        { "name": "Book A Tee Time", "action": "click", "selector": "text=/Book A Tee Time/i" },
+        { "name": "Public", "action": "click", "role": "button", "accessibleName": "Public" },
+        { "name": "Select Date", "action": "selectCityDate" },
+        { "name": "Next", "action": "click", "role": "button", "accessibleName": "Next" },
+        { "name": "Find Tee Times", "action": "click", "role": "button", "accessibleName": "Find tee times" },
+        { "name": "Read Tee Times", "action": "readTeeTimes", "cardSelector": "div.relative.border.pb-2", "timeSelector": "div.font-semibold.col-span-8", "playersSelector": "span.mt-1.text-sm", "priceRowSelector": "div.grid.grid-cols-12.px-4.py-1" }
+      ]
+    },
+    {
+      "name": "Bright Grandview",
+      "browserGroup": "city",
+      "urlFromEnv": "brightGrandviewUrl",
+      "steps": [
+        { "name": "Email", "action": "fill", "selector": "input[placeholder*='email or phone' i]", "valueFromEnv": "email" },
+        { "name": "Continue", "action": "click", "selector": "button:has-text('Continue')" },
+        { "name": "Password", "action": "fill", "selector": "input[type='password']", "valueFromEnv": "cityPassword" },
+        { "name": "Sign In", "action": "click", "selector": "button:has-text('Sign In')" },
+        { "name": "Book A Tee Time", "action": "click", "selector": "text=/Book A Tee Time/i" },
+        { "name": "Public", "action": "click", "role": "button", "accessibleName": "Public" },
+        { "name": "Select Date", "action": "selectCityDate" },
+        { "name": "Next", "action": "click", "role": "button", "accessibleName": "Next" },
+        { "name": "Find Tee Times", "action": "click", "role": "button", "accessibleName": "Find tee times" },
+        { "name": "Read Tee Times", "action": "readTeeTimes", "cardSelector": "div.relative.border.pb-2", "timeSelector": "div.font-semibold.col-span-8", "playersSelector": "span.mt-1.text-sm", "priceRowSelector": "div.grid.grid-cols-12.px-4.py-1" }
+      ]
+    },
+    {
+      "name": "Blank",
+      "browserGroup": "city",
+      "urlFromEnv": "blankUrl",
+      "steps": [
+        { "name": "Email", "action": "fill", "selector": "input[placeholder*='email or phone' i]", "valueFromEnv": "email" },
+        { "name": "Continue", "action": "click", "selector": "button:has-text('Continue')" },
+        { "name": "Password", "action": "fill", "selector": "input[type='password']", "valueFromEnv": "cityPassword" },
+        { "name": "Sign In", "action": "click", "selector": "button:has-text('Sign In')" },
+        { "name": "Book A Tee Time", "action": "click", "selector": "text=/Book A Tee Time/i" },
+        { "name": "Public", "action": "click", "role": "button", "accessibleName": "Public" },
+        { "name": "Select Date", "action": "selectCityDate" },
+        { "name": "Next", "action": "click", "role": "button", "accessibleName": "Next" },
+        { "name": "Find Tee Times", "action": "click", "role": "button", "accessibleName": "Find tee times" },
+        { "name": "Read Tee Times", "action": "readTeeTimes", "cardSelector": "div.relative.border.pb-2", "timeSelector": "div.font-semibold.col-span-8", "playersSelector": "span.mt-1.text-sm", "priceRowSelector": "div.grid.grid-cols-12.px-4.py-1" }
+      ]
+    },
+    {
+      "name": "Otter Creek",
+      "urlFromEnv": "otterCreekUrl",
+      "frameUrlIncludes": "teeitup.golf",
+      "steps": [
+        { "name": "Select Date", "action": "selectDate", "selector": "body", "dateFormat": "number", "role": "gridcell", "exact": true },
+        { "name": "Read Tee Times", "action": "readTeeTimes", "cardSelector": "[role='group']:has([data-testid='teetimes_book_now_button'])", "timeSelector": "[data-testid='teetimes-tile-time']", "playersSelector": "[data-testid='teetimes-tile-available-players']" }
+      ]
+    },
+    {
+      "name": "The Legacy",
+      "urlFromEnv": "theLegacyUrl",
+      "headless": false,
+      "steps": [
+        { "name": "Public", "action": "click", "role": "button", "accessibleName": "Public: 2-4 Players" },
+        { "name": "Select Date", "action": "selectDate", "selector": ".datepicker-days td.day:not(.disabled)", "dateFormat": "number", "exact": true, "skipIfToday": true },
+        { "name": "Read Tee Times", "action": "readTeeTimes", "cardSelector": ".time-summary-ob", "timeSelector": ".times-booking-start-time-label", "playersSelector": ".time-summary-ob-player-count" }
+      ]
+    },
+    {
+      "name": "Terrace Hills",
+      "urlFromEnv": "terraceHillsUrl",
+      "headless": false,
+      "steps": [
+        { "name": "Public", "action": "click", "selector": "button:has-text('ONLINE BOOKING - public')" },
+        { "name": "Select Date", "action": "selectDate", "selector": ".datepicker-days td.day:not(.disabled)", "dateFormat": "number", "exact": true },
+        { "name": "Read Tee Times", "action": "readTeeTimes", "cardSelector": ".time-summary", "timeSelector": ".times-booking-start-time-label, .booking-start-time-label", "playersSelector": ".js-booking-slot-players span" }
+      ]
+    }
+  ]
+}
